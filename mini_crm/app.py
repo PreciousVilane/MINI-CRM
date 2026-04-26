@@ -23,27 +23,49 @@ def dashboard():
 def contacts():
     conn = get_db_connection()
 
-    # HANDLE FORM SUBMISSION
+    # ADD CONTACT
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        company = request.form['company']
+        if 'name' in request.form:
+            name = request.form['name']
+            email = request.form['email']
+            phone = request.form['phone']
+            company = request.form['company']
 
-        conn.execute(
-            'INSERT INTO contacts (name, email, phone, company) VALUES (?, ?, ?, ?)',
-            (name, email, phone, company)
-        )
-        conn.commit()
+            conn.execute(
+                'INSERT INTO contacts (name, email, phone, company) VALUES (?, ?, ?, ?)',
+                (name, email, phone, company)
+            )
+            conn.commit()
+
+        # MOVE STAGE
+        elif 'contact_id' in request.form:
+            contact_id = request.form['contact_id']
+            new_stage = request.form['stage']
+
+            conn.execute(
+                'UPDATE contacts SET stage = ? WHERE id = ?',
+                (new_stage, contact_id)
+            )
+            conn.commit()
+
         conn.close()
         return redirect('/contacts')
 
-    # GET ALL CONTACTS
-    contancts = conn.execute('SELECT * FROM contacts').fetchall()
+    # GET DATA BY STAGE
+    leads = conn.execute("SELECT * FROM contacts WHERE stage='Lead'").fetchall()
+    contacted = conn.execute("SELECT * FROM contacts WHERE stage='Contacted'").fetchall()
+    proposal = conn.execute("SELECT * FROM contacts WHERE stage='Proposal Sent'").fetchall()
+    converted = conn.execute("SELECT * FROM contacts WHERE stage='Converted'").fetchall()
+
     conn.close()
 
-    return render_template('contacts.html', contacts=contancts)
-
+    return render_template(
+        'contacts.html',
+        leads=leads,
+        contacted=contacted,
+        proposal=proposal,
+        converted=converted
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
