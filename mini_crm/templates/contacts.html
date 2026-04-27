@@ -1,31 +1,176 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Contacts</h2>
 
-    <!-- ADD CONTACT FORM -->
-    <h3>Add New Contact</h3>
-    <form method="POST">
-        <input type="text" name="name" placeholder="Name" required><br><br>
-        <input type="email" name="email" placeholder="Email" required><br><br>
-        <input type="text" name="phone" placeholder="Phone"><br><br>
-        <input type="text" name="company" placeholder="Company"><br><br>
-        <button type="submit">Add Contact</button>
-    </form>
+<h2>Contacts</h2>
 
-    <hr>
+<form method="GET">
+    <input type="text" name="search" placeholder="Search contacts">
+    <button type="submit">Search</button>
+</form>
 
-    <!-- DISPLAY CONTACTS -->
-    <h3>All Contacts</h3>
-    <ul>
-        {% for contact in contacts %}
-            <li>
+<!--******************* ADD CONTACT FORM *******************-->
+
+<h3>Add New Contact</h3>
+<form method="POST">
+    <input type="text" name="name" placeholder="Name" required><br><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="text" name="phone" placeholder="Phone"><br><br>
+    <input type="text" name="company" placeholder="Company"><br><br>
+    <input type="date" name="follow_up"><br><br>
+    <button type="submit">Add Contact</button>
+</form>
+
+<hr>
+
+<!--******************* SALES PIPELINE *******************-->
+<h3>Sales Pipeline</h3>
+
+<div style="display: flex; gap: 40px;">
+
+    <!-- LEADS -->
+    <div>
+        <h4>Leads</h4>
+        {% for contact in leads %}
+            <p>
                 <strong>{{ contact.name }}</strong>
-                ({{ contact.email }})
-                - {{ contact.phone }}
-                - {{ contact.company }}
-            </li>
+                <br>
+                {{ contact.email }}
+
+                <form method="POST">
+                    <input type="hidden" name="contact_id" value="{{ contact.id }}">
+                    <input type="hidden" name="stage" value="Contacted">
+                    <button type="submit">Move →</button>
+                </form>
+                <!-- DELETE CONTACT FUNCTION -->
+                <form method="POST">
+                    <input type="hidden" name="delete_id" value="{{ contact.id }}">
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="/edit/{{ contact.id }}">Edit</a>
+            </p>
         {% endfor %}
-    </ul>
+    </div>
+
+    <!-- CONTACTED -->
+    <div>
+        <h4>Contacted</h4>
+        {% for contact in contacted %}
+            <p>
+                <strong>{{ contact.name }}</strong>
+
+                <form method="POST">
+                    <input type="hidden" name="contact_id" value="{{ contact.id }}">
+                    <input type="hidden" name="stage" value="Proposal Sent">
+                    <button type="submit">Move →</button>
+                </form>
+                <!-- DELETE CONTACT FUNCTION -->
+                <form method="POST">
+                    <input type="hidden" name="delete_id" value="{{ contact.id }}">
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="/edit/{{ contact.id }}">Edit</a>
+            </p>
+        {% endfor %}
+    </div>
+
+    <!-- PROPOSAL -->
+    <div>
+        <h4>Proposal Sent</h4>
+        {% for contact in proposal %}
+            <p>
+                <strong>{{ contact.name }}</strong>
+
+                <form method="POST">
+                    <input type="hidden" name="contact_id" value="{{ contact.id }}">
+                    <input type="hidden" name="stage" value="Converted">
+                    <button type="submit">Move →</button>
+                </form>
+                <!-- DELETE CONTACT FUNCTION -->
+                <form method="POST">
+                    <input type="hidden" name="delete_id" value="{{ contact.id }}">
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="/edit/{{ contact.id }}">Edit</a>
+            </p>
+        {% endfor %}
+    </div>
+
+    <!-- CONVERTED -->
+    <div>
+        <h4>Converted</h4>
+        {% for contact in converted %}
+            <p>
+                <strong>{{ contact.name }}</strong>
+                <!-- DELETE CONTACT FUNCTION -->
+                <form method="POST">
+                    <input type="hidden" name="delete_id" value="{{ contact.id }}">
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="/edit/{{ contact.id }}">Edit</a>
+            </p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<hr>
+
+<!--******************* ADD INTERACTION LOG *******************-->
+<h3>Add Interaction Log</h3>
+
+<form method="POST">
+    <select name="log_contact_id">
+    {% for contact in all_contacts %}
+        <option value="{{ contact.id }}">
+            {{ contact.name }}
+        </option>
+    {% endfor %}
+    </select>
+
+    <select name="type">
+        <option value="Call">Call</option>
+        <option value="Email">Email</option>
+        <option value="Meeting">Meeting</option>
+    </select>
+
+    <input type="text" name="note" placeholder="What happened?" required>
+
+    <button type="submit">Add Log</button>
+</form>
+
+<hr>
+
+<!--******************* RECENT ACTIVITY *******************-->
+<h3>Recent Activity</h3>
+
+<ul>
+    {% for log in logs %}
+        <li>
+            Contact ID {{ log.contact_id }} -
+            <strong>{{ log.type }}</strong>:
+            {{ log.note }}
+            ({{ log.date }})
+        </li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Follow-Ups</h3>
+
+<h4>Due Today</h4>
+<ul>
+    {% for contact in due_today %}
+        <li>{{ contact.name }} ({{ contact.follow_up }})</li>
+    {% endfor %}
+</ul>
+
+<h4>Overdue</h4>
+<ul>
+    {% for contact in overdue %}
+        <li>{{ contact.name }} ({{ contact.follow_up }})</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}

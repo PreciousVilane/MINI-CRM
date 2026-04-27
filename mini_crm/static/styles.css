@@ -1,0 +1,47 @@
+body {
+    font-family: Arial;
+    background: #f5f7fa;
+    margin: 20px;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+nav a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007BFF;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+form {
+    margin-bottom: 10px;
+}
+
+input, select {
+    padding: 5px;
+    margin: 5px 0;
+}
+
+button {
+    background: #007BFF;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+div {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

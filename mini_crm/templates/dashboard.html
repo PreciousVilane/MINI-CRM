@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Dashboard</h2>
-    <p>Welcome to your Mini CRM!</p>
+
+<h2>Dashboard</h2>
+
+<canvas id="crmChart" width="400" height="200"></canvas>
+
+<script>
+const ctx = document.getElementById('crmChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Leads', 'Contacted', 'Converted'],
+        datasets: [{
+            label: 'Pipeline Overview',
+            data: [{{ leads }}, {{ contacted }}, {{ converted }}],
+        }]
+    }
+});
+</script>
+
 {% endblock %}
